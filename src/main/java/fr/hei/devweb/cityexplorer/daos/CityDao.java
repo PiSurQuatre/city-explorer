@@ -45,14 +45,45 @@ public class CityDao {
 		return null;
 	}
 	
-	public void addCity(City newCity) {
+	public void addCity(City newCity){
+		addCity(newCity,null);
+	}
+	
+	public void addCity(City newCity, String path) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary) VALUES (?, ?)")) {
+				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, picture) VALUES (?, ?, ?)")) {
 			statement.setString(1, newCity.getName());
 			statement.setString(2, newCity.getSummary());
+			statement.setString(3, path);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
 		}
+	}
+	
+	public void addImagePath(int id,String path){
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET picture=? WHERE id=?")) {
+			statement.setString(1, path);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+	}
+
+	public String getImagePath(int id) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("SELECT picture FROM city WHERE id = ?")) {
+			statement.setInt(1, id);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					return resultSet.getString("picture");
+				}
+			}
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+		return null;
 	}
 }

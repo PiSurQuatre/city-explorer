@@ -1,5 +1,6 @@
 package fr.hei.devweb.cityexplorer.services;
 
+import java.net.URI;
 import java.util.List;
 
 import fr.hei.devweb.cityexplorer.daos.CityDao;
@@ -31,7 +32,11 @@ public class CityService {
 		return cityDao.getCity(id);
 	}
 	
-	public void addCity(City newCity) {
+	public void addCity(City newCity){
+		addCity(newCity, null);
+	}
+	
+	public void addCity(City newCity, String path) {
 		if(newCity == null){
 			throw new IllegalArgumentException("A city must be provided.");
 		}
@@ -41,7 +46,12 @@ public class CityService {
 		if(newCity.getSummary() == null || "".equals(newCity.getSummary())) {
 			throw new IllegalArgumentException("A city must have a summary.");
 		}
-		cityDao.addCity(newCity);
+		cityDao.addCity(newCity, path);
+	}
+
+	public String getImagePath(int id) {
+		return cityDao.getImagePath(id);
+		
 	}
 
 }
