@@ -45,7 +45,6 @@ public class CityImageServlet extends HttpServlet {
 			Files.copy(uri, response.getOutputStream());
 			
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

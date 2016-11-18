@@ -61,17 +61,6 @@ public class CityDao {
 		}
 	}
 	
-	public void addImagePath(int id,String path){
-		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("UPDATE city SET picture=? WHERE id=?")) {
-			statement.setString(1, path);
-			statement.setInt(2, id);
-			statement.executeUpdate();
-		} catch (SQLException e) {
-			throw new CityExplorerRuntimeException("Error when getting cities", e);
-		}
-	}
-
 	public String getImagePath(int id) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
 				PreparedStatement statement = connection.prepareStatement("SELECT picture FROM city WHERE id = ?")) {

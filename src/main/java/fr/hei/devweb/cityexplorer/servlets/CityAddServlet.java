@@ -26,9 +26,9 @@ public class CityAddServlet extends AbstractGenericServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		TemplateEngine templateEngine = this.createTemplateEngine(req);
-		
+
 		WebContext context = new WebContext(req, resp, getServletContext());
-		if(req.getSession().getAttribute("cityCreationError") != null) {
+		if (req.getSession().getAttribute("cityCreationError") != null) {
 			context.setVariable("errorMessage", req.getSession().getAttribute("cityCreationError"));
 			context.setVariable("city", (City) req.getSession().getAttribute("cityCreationData"));
 
@@ -37,7 +37,7 @@ public class CityAddServlet extends AbstractGenericServlet {
 		} else {
 			context.setVariable("city", new City());
 		}
-		
+
 		templateEngine.process("cityadd", context, resp.getWriter());
 	}
 
@@ -45,16 +45,16 @@ public class CityAddServlet extends AbstractGenericServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String name = req.getParameter("name");
 		String summary = req.getParameter("summary");
-		
+
 		City newCity = new City(null, name, summary);
-		
 		Part image = req.getPart("image");
-		String fileName = "/home/julien/image/city-explorer/" + name + "/" + image.getSubmittedFileName();
-		File f = new File(fileName);
-		f.getParentFile().mkdirs();
-		f.createNewFile();
-		image.write(fileName);
+
 		try {
+			String fileName = "/home/julien/image/city-explorer/" + name + "/" + image.getSubmittedFileName();
+			File f = new File(fileName);
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+			image.write(fileName);
 			CityService.getInstance().addCity(newCity, fileName);
 			resp.sendRedirect("home");
 		} catch (IllegalArgumentException e) {
@@ -65,5 +65,4 @@ public class CityAddServlet extends AbstractGenericServlet {
 
 	}
 
-	
 }
