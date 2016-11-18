@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>City Explorer</title>
+<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="css/custom.css">
+
+</head>
+<body>
+	<header th:replace="~{common::header}"></header>
+
+	<div id="mainContent" class="container-fluid">
+		<section class="cityadd">
+			<article class="citybox">
+				<h3>Delete a city</h3>
+				<p class="alert alert-danger" role="alert" th:if="${errorMessage != null}" th:text="${errorMessage}"></p>
+				<form method="post" class="form-horizontal">
+					<div class="form-group">
+				    	<div class="col-sm-offset-2 col-sm-10">
+				      		<button type="submit" class="btn btn-primary">Delete the city</button>
+				    	</div>
+				  	</div>
+				</form>
+			</article>
+		</section>
+	</div>
+</body>
+</html>

@@ -18,7 +18,7 @@ public class CityDao {
 
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM city ORDER BY name")) {
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM city WHERE deleted=false ORDER BY name ")) {
 			while (resultSet.next()) {
 				cities.add(
 						new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary")));
@@ -32,7 +32,7 @@ public class CityDao {
 
 	public City getCity(Integer id) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE id = ?")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE id = ? AND deleted = false")) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
@@ -54,5 +54,16 @@ public class CityDao {
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
 		}
+	}
+
+	public void deleteCity(City newCity) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET deleted=1 WHERE id=?;")) {
+			statement.setInt(1, newCity.getId());
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when deleting cities", e);
+		}
+		
 	}
 }
