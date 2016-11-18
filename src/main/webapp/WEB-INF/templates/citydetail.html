@@ -18,7 +18,12 @@
 				<div class="cityinfos">
 					<p th:text="${city.summary}" class="summary"></p>
 					<div class="btn-group citylike" role="group">
-
+				      <a th:href="'avis?retour=detail&like='+${city.id}" class="btn btn-success">
+					    <i class="fa fa-thumbs-up" aria-hidden="true"></i> [[${city.likes}]]
+					  </a>
+					  <a th:href="'avis?retour=detail&dislike='+${city.id}" class="btn btn-danger">
+					    <i class="fa fa-thumbs-down" aria-hidden="true"></i> [[${city.dislikes}]]
+					  </a>
 					</div>
 				</div>
 				<div class="cityspotlights">
