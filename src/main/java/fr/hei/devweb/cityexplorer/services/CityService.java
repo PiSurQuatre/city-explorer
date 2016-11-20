@@ -41,6 +41,9 @@ public class CityService {
 		if(newCity.getSummary() == null || "".equals(newCity.getSummary())) {
 			throw new IllegalArgumentException("A city must have a summary.");
 		}
+		if(newCity.getCountry() == null) {
+			throw new IllegalArgumentException("A city must have a country.");
+		}
 		cityDao.addCity(newCity);
 	}
 
