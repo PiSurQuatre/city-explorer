@@ -4,6 +4,7 @@ import java.util.List;
 
 import fr.hei.devweb.cityexplorer.daos.CityDao;
 import fr.hei.devweb.cityexplorer.pojos.City;
+import fr.hei.devweb.cityexplorer.pojos.Country;
 
 public class CityService {
 	
@@ -20,8 +21,12 @@ public class CityService {
 	private CityService() {
 	}
 	
-	public List<City> listAllCities() {
-		return cityDao.listCities();
+	public List<City> listAllCities(Country country) {
+		if(country == null) {
+			return cityDao.listCities();
+		} else {
+			return cityDao.listCitiesByCountry(country);
+		}
 	}
 	
 	public City getCity(Integer id) {

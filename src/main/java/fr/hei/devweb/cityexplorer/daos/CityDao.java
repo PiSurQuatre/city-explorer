@@ -22,8 +22,27 @@ public class CityDao {
 				ResultSet resultSet = statement.executeQuery("SELECT * FROM city ORDER BY name")) {
 			while (resultSet.next()) {
 				Country country = Country.valueOf(resultSet.getString("country"));
-				cities.add(
-						new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"), country));
+				cities.add(new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"),
+						country));
+			}
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+
+		return cities;
+	}
+
+	public List<City> listCitiesByCountry(Country country) {
+		List<City> cities = new ArrayList<City>();
+
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE country = ? ORDER BY name")) {
+			statement.setString(1, country.name());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					cities.add(new City(resultSet.getInt("id"), resultSet.getString("name"),
+							resultSet.getString("summary"), Country.valueOf(resultSet.getString("country"))));
+				}
 			}
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
@@ -39,7 +58,8 @@ public class CityDao {
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
 					Country country = Country.valueOf(resultSet.getString("country"));
-					return new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"), country);
+					return new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"),
+							country);
 				}
 			}
 		} catch (SQLException e) {
@@ -47,10 +67,11 @@ public class CityDao {
 		}
 		return null;
 	}
-	
+
 	public void addCity(City newCity) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, country) VALUES (?, ?, ?)")) {
+				PreparedStatement statement = connection
+						.prepareStatement("INSERT INTO city(name, summary, country) VALUES (?, ?, ?)")) {
 			statement.setString(1, newCity.getName());
 			statement.setString(2, newCity.getSummary());
 			statement.setString(3, newCity.getCountry().name());
