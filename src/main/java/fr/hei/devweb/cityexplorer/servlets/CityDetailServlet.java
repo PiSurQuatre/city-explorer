@@ -25,6 +25,7 @@ public class CityDetailServlet extends AbstractGenericServlet {
 		
 		Integer idCity = Integer.parseInt(req.getParameter("id"));
 		context.setVariable("city", CityService.getInstance().getCity(idCity));
+		context.setVariable("comments", CityService.getInstance().listCommentsByCity(idCity));
 		
 		templateEngine.process("citydetail", context, resp.getWriter());
 	}
