@@ -9,6 +9,9 @@ public class Comment {
 	private LocalDate creationDate;
 	private String message;
 	
+	public Comment() {
+	}
+	
 	public Comment(Integer id, String pseudo, LocalDate creationDate, String message) {
 		super();
 		this.id = id;

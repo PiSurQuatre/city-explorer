@@ -53,5 +53,25 @@ public class CityService {
 		}
 		return commentDao.listComments(cityId);
 	}
+	
+	public void addComment(Integer cityId, Comment newComment) {
+		if(cityId == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		if(newComment == null){
+			throw new IllegalArgumentException("A comment must be provided.");
+		}
+		if(newComment.getPseudo() == null || "".equals(newComment.getPseudo())) {
+			throw new IllegalArgumentException("A comment must have a pseudo.");
+		}
+		if(newComment.getMessage() == null || "".equals(newComment.getMessage())) {
+			throw new IllegalArgumentException("A comment must have a message.");
+		}
+		if(newComment.getCreationDate()== null) {
+			throw new IllegalArgumentException("A comment must have a creation date.");
+		}
+		
+		commentDao.addComment(newComment, cityId);
+	}
 
 }

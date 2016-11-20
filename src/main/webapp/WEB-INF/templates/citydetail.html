@@ -46,7 +46,7 @@
 				<p>Have you been to this city? What did you think? Leave a
 					comment, we want to know!</p>
 				<div class="comments">
-					<article class="commentbox" id="newcomment">
+					<article class="commentbox" th:classappend="${commentCreationErrorMessage != null} ? 'opened'" id="newcomment">
 						<h4>
 							<span class="btn-open"
 								onclick="document.querySelector('#newcomment').classList.add('opened')">
@@ -57,13 +57,14 @@
 							</span> Add a new comment
 						</h4>
 						<form method="post">
+							<p class="alert alert-danger" role="alert" th:if="${commentCreationErrorMessage != null}" th:text="${commentCreationErrorMessage}"></p>
 							<div class="form-group">
 								<input type="text" class="form-control" name="pseudo"
-									placeholder="Pseudo">
+									placeholder="Pseudo" th:value="${commentCreation.pseudo}">
 							</div>
 							<div class="form-group">
 								<textarea class="form-control" name="comment"
-									placeholder="Your comment"></textarea>
+									placeholder="Your comment">[[${commentCreation.message}]]</textarea>
 							</div>
 							<div class="form-group">
 								<input type="submit" class="btn btn-primary"
