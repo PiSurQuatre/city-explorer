@@ -20,8 +20,9 @@ public class CityDao {
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery("SELECT * FROM city ORDER BY name")) {
 			while (resultSet.next()) {
-				cities.add(
-						new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary")));
+				cities.add(new City(resultSet.getInt("id"), 
+						resultSet.getString("name"), resultSet.getString("summary"),
+						resultSet.getInt("likes"), resultSet.getInt("dislikes")));
 			}
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
@@ -36,7 +37,9 @@ public class CityDao {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
-					return new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"));
+					return new City(resultSet.getInt("id"), resultSet.getString("name"), 
+							resultSet.getString("summary"),
+							resultSet.getInt("likes"), resultSet.getInt("dislikes"));
 				}
 			}
 		} catch (SQLException e) {
@@ -47,9 +50,11 @@ public class CityDao {
 	
 	public void addCity(City newCity) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary) VALUES (?, ?)")) {
+				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, likes, dislikes) VALUES (?, ?, ?, ?)")) {
 			statement.setString(1, newCity.getName());
 			statement.setString(2, newCity.getSummary());
+			statement.setInt(3, newCity.getLikes());
+			statement.setInt(4, newCity.getDislikes());
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
