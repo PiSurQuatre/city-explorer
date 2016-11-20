@@ -48,6 +48,28 @@ public class CityDao {
 		return null;
 	}
 	
+	public void addLike(Integer cityId) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET likes=likes+1 WHERE id=?")) {
+			statement.setInt(1, cityId);
+			statement.executeUpdate();			
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when liking city", e);
+		}
+	}
+	
+	public void addDislike(Integer cityId) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET dislikes=dislikes+1 WHERE id=?")) {
+			statement.setInt(1, cityId);
+			statement.executeUpdate();			
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when disliking city", e);
+		}
+	}
+	
+	
+	
 	public void addCity(City newCity) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
 				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, likes, dislikes) VALUES (?, ?, ?, ?)")) {

@@ -31,6 +31,20 @@ public class CityService {
 		return cityDao.getCity(id);
 	}
 	
+	public void likeCity(Integer id) {
+		if(id == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		cityDao.addLike(id);
+	}
+	
+	public void dislikeCity(Integer id) {
+		if(id == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		cityDao.addDislike(id);
+	}
+	
 	public void addCity(City newCity) {
 		if(newCity == null){
 			throw new IllegalArgumentException("A city must be provided.");

@@ -51,6 +51,42 @@ public class CityDaoTestCase extends AbstractDaoTestCase {
 	}
 	
 	@Test
+	public void shouldAddLike() throws Exception {
+		// WHEN
+		cityDao.addLike(1);
+		// THEN
+		try(Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM city WHERE id=1")){
+			Assertions.assertThat(resultSet.next()).isTrue();
+			Assertions.assertThat(resultSet.getInt("id")).isEqualTo(1);
+			Assertions.assertThat(resultSet.getString("name")).isEqualTo("City 1");
+			Assertions.assertThat(resultSet.getString("summary")).isEqualTo("Summary 1");
+			Assertions.assertThat(resultSet.getInt("likes")).isEqualTo(2);
+			Assertions.assertThat(resultSet.getInt("dislikes")).isEqualTo(2);
+			Assertions.assertThat(resultSet.next()).isFalse();
+		}
+	}
+	
+	@Test
+	public void shouldAddDislike() throws Exception {
+		// WHEN
+		cityDao.addDislike(1);
+		// THEN
+		try(Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM city WHERE id=1")){
+			Assertions.assertThat(resultSet.next()).isTrue();
+			Assertions.assertThat(resultSet.getInt("id")).isEqualTo(1);
+			Assertions.assertThat(resultSet.getString("name")).isEqualTo("City 1");
+			Assertions.assertThat(resultSet.getString("summary")).isEqualTo("Summary 1");
+			Assertions.assertThat(resultSet.getInt("likes")).isEqualTo(1);
+			Assertions.assertThat(resultSet.getInt("dislikes")).isEqualTo(3);
+			Assertions.assertThat(resultSet.next()).isFalse();
+		}
+	}
+	
+	@Test
 	public void shouldAddCity() throws Exception {
 		// GIVEN 
 		City newCity = new City(null, "My new city", "Summary for my new city", 11, 12);
