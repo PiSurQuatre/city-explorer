@@ -43,5 +43,12 @@ public class CityService {
 		}
 		cityDao.addCity(newCity);
 	}
+	
+	public void deleteCity(Integer cityId) {
+		if(cityId == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		cityDao.deleteCity(cityId);
+	}
 
 }
