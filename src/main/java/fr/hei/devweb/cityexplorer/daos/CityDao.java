@@ -45,11 +45,12 @@ public class CityDao {
 		return null;
 	}
 	
-	public void addCity(City newCity) {
+	public void addCity(City newCity, String picturePath) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary) VALUES (?, ?)")) {
+				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, picture) VALUES (?, ?, ?)")) {
 			statement.setString(1, newCity.getName());
 			statement.setString(2, newCity.getSummary());
+			statement.setString(3, picturePath);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);

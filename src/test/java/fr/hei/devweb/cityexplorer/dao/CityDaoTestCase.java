@@ -53,7 +53,7 @@ public class CityDaoTestCase extends AbstractDaoTestCase {
 		// GIVEN 
 		City newCity = new City(null, "My new city", "Summary for my new city");
 		// WHEN
-		cityDao.addCity(newCity);
+		cityDao.addCity(newCity, "/path/to/picture.png");
 		// THEN
 		try(Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
 				Statement statement = connection.createStatement();
@@ -62,6 +62,7 @@ public class CityDaoTestCase extends AbstractDaoTestCase {
 			Assertions.assertThat(resultSet.getInt("id")).isNotNull();
 			Assertions.assertThat(resultSet.getString("name")).isEqualTo("My new city");
 			Assertions.assertThat(resultSet.getString("summary")).isEqualTo("Summary for my new city");
+			Assertions.assertThat(resultSet.getString("picture")).isEqualTo("/path/to/picture.png");
 			Assertions.assertThat(resultSet.next()).isFalse();
 		}
 	}

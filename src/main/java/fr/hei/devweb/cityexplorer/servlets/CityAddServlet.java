@@ -3,9 +3,11 @@ package fr.hei.devweb.cityexplorer.servlets;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -14,6 +16,7 @@ import fr.hei.devweb.cityexplorer.pojos.City;
 import fr.hei.devweb.cityexplorer.services.CityService;
 
 @WebServlet("/addcity")
+@MultipartConfig
 public class CityAddServlet extends AbstractGenericServlet {
 
 	private static final long serialVersionUID = -3497793006266174453L;
@@ -41,16 +44,18 @@ public class CityAddServlet extends AbstractGenericServlet {
 		String name = req.getParameter("name");
 		String summary = req.getParameter("summary");
 		
+		Part cityPicture = req.getPart("picture");
+		
 		City newCity = new City(null, name, summary);
 		
 		try {
-			CityService.getInstance().addCity(newCity);
+			CityService.getInstance().addCity(newCity, cityPicture);
 			resp.sendRedirect("home");
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException|IOException e) {
 			req.getSession().setAttribute("cityCreationError", e.getMessage());
 			req.getSession().setAttribute("cityCreationData", newCity);
 			resp.sendRedirect("addcity");
-		}
+		} 
 
 	}
 
