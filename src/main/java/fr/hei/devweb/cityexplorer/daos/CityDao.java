@@ -35,8 +35,23 @@ public class CityDao {
 				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE id = ?")) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
+				if (resultSet.next()) {
 					return new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"));
+				}
+			}
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+		return null;
+	}
+	
+	public String getPicturePath(Integer id) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("SELECT picture FROM city WHERE id = ?")) {
+			statement.setInt(1, id);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					return resultSet.getString("picture");
 				}
 			}
 		} catch (SQLException e) {

@@ -1,6 +1,7 @@
 package fr.hei.devweb.cityexplorer.services;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,6 +59,29 @@ public class CityService {
 		cityDao.addCity(newCity, picturePath.toString());
 		
 		Files.copy(picture.getInputStream(), picturePath);
+	}
+	
+	public Path getPicturePatch(Integer cityId) {
+		String picturePathString = cityDao.getPicturePath(cityId);
+		if(picturePathString == null) {
+			return getDefaultPicturePath();
+		} else {
+			Path picturePath = Paths.get(cityDao.getPicturePath(cityId));
+			if(Files.exists(picturePath)) {
+				return picturePath;
+			} else {
+				return getDefaultPicturePath();
+			}
+		}
+		
+	}
+	
+	private Path getDefaultPicturePath() {
+		try {
+			return Paths.get(this.getClass().getClassLoader().getResource("city-no-photo.png").toURI());
+		} catch (URISyntaxException e) {
+			return null;
+		}
 	}
 
 }
