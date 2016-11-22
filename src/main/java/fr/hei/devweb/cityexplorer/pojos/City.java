@@ -7,21 +7,20 @@ public class City {
 	private String summary;
 	private Integer likes;
 	private Integer dislikes;
-	
-	
+	private Country country;	
 	
 	public City() {
 	}
 
 
-	
-	public City(Integer id, String name, String summary, Integer likes, Integer dislikes) {
+	public City(Integer id, String name, String summary, Country country, Integer likes, Integer dislikes) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.summary = summary;
 		this.likes = likes;
 		this.dislikes = dislikes;
+		this.country = country;
 	}
 
 
@@ -59,6 +58,14 @@ public class City {
 
 	public void setDislikes(Integer dislikes) {
 		this.dislikes = dislikes;
+	}
+	
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 	
 	
