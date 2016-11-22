@@ -6,6 +6,7 @@ import fr.hei.devweb.cityexplorer.daos.CityDao;
 import fr.hei.devweb.cityexplorer.daos.CommentDao;
 import fr.hei.devweb.cityexplorer.pojos.City;
 import fr.hei.devweb.cityexplorer.pojos.Comment;
+import fr.hei.devweb.cityexplorer.pojos.Country;
 
 public class CityService {
 	
@@ -23,8 +24,12 @@ public class CityService {
 	private CityService() {
 	}
 	
-	public List<City> listAllCities() {
-		return cityDao.listCities();
+	public List<City> listAllCities(Country country) {
+		if(country == null) {
+			return cityDao.listCities();
+		} else {
+			return cityDao.listCitiesByCountry(country);
+		}
 	}
 	
 	public City getCity(Integer id) {
@@ -32,6 +37,20 @@ public class CityService {
 			throw new IllegalArgumentException("City id must be provided.");
 		}
 		return cityDao.getCity(id);
+	}
+	
+	public void likeCity(Integer id) {
+		if(id == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		cityDao.addLike(id);
+	}
+	
+	public void dislikeCity(Integer id) {
+		if(id == null) {
+			throw new IllegalArgumentException("City id must be provided.");
+		}
+		cityDao.addDislike(id);
 	}
 	
 	public void addCity(City newCity) {
@@ -43,6 +62,9 @@ public class CityService {
 		}
 		if(newCity.getSummary() == null || "".equals(newCity.getSummary())) {
 			throw new IllegalArgumentException("A city must have a summary.");
+		}
+		if(newCity.getCountry() == null) {
+			throw new IllegalArgumentException("A city must have a country.");
 		}
 		cityDao.addCity(newCity);
 	}

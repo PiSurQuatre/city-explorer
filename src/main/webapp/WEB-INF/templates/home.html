@@ -12,15 +12,36 @@
 	<header th:replace="~{common::header}"></header>
 
 	<div id="mainContent" class="container-fluid">
+		<section class="cityfilters">
+			<h3>Filters</h3>
+			<form class="form-inline" method="post">
+				<div class="form-group">
+					<label for="countryInput">Country</label>
+					<select class="form-control" id="countryInput" name="countryFilter">
+						<option value="">All countries</option>
+						<option th:each="country : ${countries}" th:value="${country}" th:selected="${countryFilterSelected} == ${country}">[[${country.label}]]</option>
+					</select>
+				</div>
+				<input type="submit" class="btn btn-default" value="Filter">
+			</form>
+		</section>
 		<section class="citylist">
 			<article class="citybox" th:each="city : ${cities}">
 				<h3 th:text="${city.name}"></h3>
 				<p th:text="${city.summary}" class="summary"></p>
 				<div class="btn-toolbar actionbar" role="toolbar">
 					<div class="btn-group" role="group">
-						<a th:href="'detail?id='+${city.id}" class="btn btn-primary"><i class="fa fa-eye"
-							aria-hidden="true"></i> See details</a>
+						<a th:href="'detail?id='+${city.id}" class="btn btn-primary"><i
+							class="fa fa-eye" aria-hidden="true"></i> See details</a>
 					</div>
+					<div class="btn-group" role="group">
+					  <a class="btn btn-success" th:href="'opinion?like='+${city.id}">
+					    <i class="fa fa-thumbs-up" aria-hidden="true"></i> [[${city.likes}]]
+					  </a>
+					  <a class="btn btn-danger" th:href="'opinion?dislike='+${city.id}">
+					    <i class="fa fa-thumbs-down" aria-hidden="true"></i> [[${city.dislikes}]]
+					  </a>
+					</div>					
 				</div>
 				<aside class="cityPhoto">
 					<img src="img/city-no-photo.png" alt="Vignette Londres">

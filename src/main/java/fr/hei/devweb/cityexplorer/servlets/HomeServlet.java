@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import fr.hei.devweb.cityexplorer.pojos.Country;
 import fr.hei.devweb.cityexplorer.services.CityService;
 
 @WebServlet("/home")
@@ -22,10 +23,30 @@ public class HomeServlet extends AbstractGenericServlet {
 		TemplateEngine templateEngine = this.createTemplateEngine(req);
 		
 		WebContext context = new WebContext(req, resp, getServletContext());
-		context.setVariable("cities", CityService.getInstance().listAllCities());
+		Country countryFilter = (Country) req.getSession().getAttribute("countryFilter");
+		context.setVariable("cities", CityService.getInstance().listAllCities(countryFilter));
+		context.setVariable("countries", Country.values());
+		
+		context.setVariable("countryFilterSelected", countryFilter);
 		
 		templateEngine.process("home", context, resp.getWriter());
 	}
 
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String countryString = req.getParameter("countryFilter");
+		
+		try {
+			Country country = Country.valueOf(countryString);
+			req.getSession().setAttribute("countryFilter", country);
+		} catch (IllegalArgumentException e) {
+			req.getSession().removeAttribute("countryFilter");
+		}
+		
+		resp.sendRedirect("home");
+		
+	}
+
+	
 	
 }
