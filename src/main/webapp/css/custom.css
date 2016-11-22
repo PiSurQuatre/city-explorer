@@ -219,7 +219,7 @@ body {
 }
 
 #newcomment.opened form{
-	height:180px;
+	height:inherit;
 	padding:10px 10px 0;
 }
 

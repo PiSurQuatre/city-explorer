@@ -13,6 +13,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import fr.hei.devweb.cityexplorer.pojos.City;
+import fr.hei.devweb.cityexplorer.pojos.Country;
 import fr.hei.devweb.cityexplorer.services.CityService;
 
 @WebServlet("/addcity")
@@ -35,7 +36,7 @@ public class CityAddServlet extends AbstractGenericServlet {
 		} else {
 			context.setVariable("city", new City());
 		}
-		
+		context.setVariable("countries", Country.values());
 		templateEngine.process("cityadd", context, resp.getWriter());
 	}
 
@@ -43,10 +44,15 @@ public class CityAddServlet extends AbstractGenericServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String name = req.getParameter("name");
 		String summary = req.getParameter("summary");
+		Country country = null;
+		try {
+			country = Country.valueOf(req.getParameter("country"));
+		} catch (IllegalArgumentException e) {
+		}
 		
 		Part cityPicture = req.getPart("picture");
+		City newCity = new City(null, name, summary, country, 0, 0);
 		
-		City newCity = new City(null, name, summary);
 		
 		try {
 			CityService.getInstance().addCity(newCity, cityPicture);

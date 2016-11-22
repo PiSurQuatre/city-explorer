@@ -18,7 +18,12 @@
 				<div class="cityinfos">
 					<p th:text="${city.summary}" class="summary"></p>
 					<div class="btn-group citylike" role="group">
-
+						<a class="btn btn-success" th:href="'opinion?return=detail&like='+${city.id}">
+						    <i class="fa fa-thumbs-up" aria-hidden="true"></i> [[${city.likes}]]
+						</a>
+						<a class="btn btn-danger" th:href="'opinion?return=detail&dislike='+${city.id}">
+						    <i class="fa fa-thumbs-down" aria-hidden="true"></i> [[${city.dislikes}]]
+						</a>
 					</div>
 				</div>
 				<div class="cityspotlights">
@@ -40,6 +45,49 @@
 				<aside class="cityPhoto">
 					<img src="img/city-no-photo.png" alt="Vignette Londres">
 				</aside>
+			</section>
+			<section class="citycomments">
+				<h3>Comments</h3>
+				<p>Have you been to this city? What did you think? Leave a
+					comment, we want to know!</p>
+				<div class="comments">
+					<article class="commentbox" th:classappend="${commentCreationErrorMessage != null} ? 'opened'" id="newcomment">
+						<h4>
+							<span class="btn-open"
+								onclick="document.querySelector('#newcomment').classList.add('opened')">
+								<i class="fa fa-plus-square" aria-hidden="true"></i>
+							</span> <span class="btn-close"
+								onclick="document.querySelector('#newcomment').classList.remove('opened')">
+								<i class="fa fa-minus-square" aria-hidden="true"></i>
+							</span> Add a new comment
+						</h4>
+						<form method="post">
+							<p class="alert alert-danger" role="alert" th:if="${commentCreationErrorMessage != null}" th:text="${commentCreationErrorMessage}"></p>
+							<div class="form-group">
+								<input type="text" class="form-control" name="pseudo"
+									placeholder="Pseudo" th:value="${commentCreation.pseudo}">
+							</div>
+							<div class="form-group">
+								<textarea class="form-control" name="comment"
+									placeholder="Your comment">[[${commentCreation.message}]]</textarea>
+							</div>
+							<div class="form-group">
+								<input type="submit" class="btn btn-primary"
+									value="Add my comment">
+							</div>
+						</form>
+					</article>
+					<article class="commentbox" th:each="comment : ${comments}">
+						<h4>
+							[[${comment.pseudo}]]
+							<small>
+								<i class="fa fa-calendar" aria-hidden="true"></i>
+								[[${#temporals.format(comment.creationDate, 'dd/MM/yyyy')}]]
+							</small>
+						</h4>
+						<p class="commenttext" th:text="${comment.message}"></p>
+					</article>
+				</div>
 			</section>
 		</section>
 	</div>
