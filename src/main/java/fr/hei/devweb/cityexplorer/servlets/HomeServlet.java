@@ -23,29 +23,28 @@ public class HomeServlet extends AbstractGenericServlet {
 		TemplateEngine templateEngine = this.createTemplateEngine(req);
 		
 		WebContext context = new WebContext(req, resp, getServletContext());
-		Country filterCountry = (Country) req.getSession().getAttribute("filterCountry");
-		context.setVariable("cities", CityService.getInstance().listCities(filterCountry));
+		Country countryFilter = (Country) req.getSession().getAttribute("countryFilter");
+		context.setVariable("cities", CityService.getInstance().listAllCities(countryFilter));
 		context.setVariable("countries", Country.values());
-		context.setVariable("filterCountry", filterCountry);
+		
+		context.setVariable("countryFilterSelected", countryFilter);
 		
 		templateEngine.process("home", context, resp.getWriter());
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String selectedCountry = req.getParameter("country");
+		String countryString = req.getParameter("countryFilter");
 		
-		if(selectedCountry == null || "".equals(selectedCountry)) {
-			req.getSession().removeAttribute("filterCountry");
-		} else {
-			try {
-				req.getSession().setAttribute("filterCountry", Country.valueOf(selectedCountry));
-			} catch (IllegalArgumentException e) {
-				req.getSession().removeAttribute("filterCountry");
-			}
+		try {
+			Country country = Country.valueOf(countryString);
+			req.getSession().setAttribute("countryFilter", country);
+		} catch (IllegalArgumentException e) {
+			req.getSession().removeAttribute("countryFilter");
 		}
 		
 		resp.sendRedirect("home");
+		
 	}
 
 	

@@ -5,11 +5,11 @@ public enum Country {
 	
 	private String label;
 
-	private Country(String libelle) {
-		this.label = libelle;
+	private Country(String label) {
+		this.label = label;
 	}
 
 	public String getLabel() {
 		return label;
-	}
+	}	
 }

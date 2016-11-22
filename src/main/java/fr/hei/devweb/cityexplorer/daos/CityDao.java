@@ -19,11 +19,11 @@ public class CityDao {
 
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM city ORDER BY name")) {
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM city WHERE deleted=false ORDER BY name")) {
 			while (resultSet.next()) {
-				cities.add(
-						new City(resultSet.getInt("id"), resultSet.getString("name"),
-								resultSet.getString("summary"), Country.valueOf(resultSet.getString("country"))));
+				Country country = Country.valueOf(resultSet.getString("country"));
+				cities.add(new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"),
+						country, resultSet.getInt("likes"), resultSet.getInt("dislikes")));
 			}
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
@@ -36,13 +36,13 @@ public class CityDao {
 		List<City> cities = new ArrayList<City>();
 
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement("SELECT * FROM city WHERE country=? ORDER BY name")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE country = ? AND deleted=false ORDER BY name")) {
 			statement.setString(1, country.name());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
 					cities.add(new City(resultSet.getInt("id"), resultSet.getString("name"),
-							resultSet.getString("summary"), Country.valueOf(resultSet.getString("country"))));
+							resultSet.getString("summary"), Country.valueOf(resultSet.getString("country")), 
+									resultSet.getInt("likes"), resultSet.getInt("dislikes")));
 				}
 			}
 		} catch (SQLException e) {
@@ -54,12 +54,13 @@ public class CityDao {
 
 	public City getCity(Integer id) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE id = ?")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM city WHERE id = ? AND deleted=false")) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
-					return new City(resultSet.getInt("id"), resultSet.getString("name"),
-							resultSet.getString("summary"), Country.valueOf(resultSet.getString("country")));
+				if (resultSet.next()) {
+					Country country = Country.valueOf(resultSet.getString("country"));
+					return new City(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("summary"),
+							country, resultSet.getInt("likes"), resultSet.getInt("dislikes"));
 				}
 			}
 		} catch (SQLException e) {
@@ -68,16 +69,66 @@ public class CityDao {
 		return null;
 	}
 
-	public void addCity(City newCity) {
+	public void addLike(Integer cityId) {
 		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO city(name, summary, country) VALUES (?, ?, ?)")) {
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET likes=likes+1 WHERE id=?")) {
+			statement.setInt(1, cityId);
+			statement.executeUpdate();			
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when liking city", e);
+		}
+	}
+	
+	public void addDislike(Integer cityId) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET dislikes=dislikes+1 WHERE id=?")) {
+			statement.setInt(1, cityId);
+			statement.executeUpdate();			
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when disliking city", e);
+		}
+	}
+	
+	
+	
+	public String getPicturePath(Integer id) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("SELECT picture FROM city WHERE id = ?")) {
+			statement.setInt(1, id);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					return resultSet.getString("picture");
+				}
+			}
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+		return null;
+	}
+	
+	public void addCity(City newCity, String picturePath) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("INSERT INTO city(name, summary, likes, dislikes, country, picture) VALUES (?, ?, ?, ?, ?, ?)")) {
 			statement.setString(1, newCity.getName());
 			statement.setString(2, newCity.getSummary());
-			statement.setString(3, newCity.getCountry().name());
+			statement.setInt(3, newCity.getLikes());
+			statement.setInt(4, newCity.getDislikes());
+			statement.setString(5, newCity.getCountry().name());
+			statement.setString(6, picturePath);
+
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new CityExplorerRuntimeException("Error when getting cities", e);
+		}
+	}
+	
+	public void deleteCity(Integer cityId) {
+		try (Connection connection = DataSourceProvider.getInstance().getDataSource().getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE city SET deleted=true WHERE id=?")) {
+			statement.setInt(1, cityId);
+			statement.executeUpdate();	
+		} catch (SQLException e) {
+			throw new CityExplorerRuntimeException("Error when deleting cities", e);
 		}
 	}
 }
